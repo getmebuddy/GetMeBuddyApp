@@ -1,39 +1,47 @@
-
-
-# Resolve react_native_pods.rb with node to allow for hoisting
-use_modular_headers!
-
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+require_relative '../node_modules/react-native/scripts/react_native_pods'
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# Force the use of frameworks instead of static libraries for all pods
+use_frameworks! :linkage => :static
 
 target 'GetMeBuddyApp' do
   config = use_native_modules!
 
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
   use_react_native!(
     :path => config[:reactNativePath],
+    # Hermes is now enabled by default
+    :hermes_enabled => flags[:hermes_enabled],
+    # Remove the Flipper configuration entirely - we're using frameworks which are incompatible with Flipper
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
-    react_native_post_install(
-      installer,
-      config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
-    )
+    # Ensure all pods support the same deployment target as your app
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        # Fix for Xcode 15
+        config.build_settings['SWIFT_VERSION'] = '5.0'
+        config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = min_ios_version_supported
+        
+        # Fix React warnings
+        if target.name == 'React-Core' || target.name.include?('React-')
+          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        end
+
+        # Fix warnings that cause build failures
+        config.build_settings['CLANG_WARN_DOCUMENTATION_COMMENTS'] = 'NO'
+        config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+        config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'NO'
+      end
+    end
+    
+    react_native_post_install(installer)
   end
 end
