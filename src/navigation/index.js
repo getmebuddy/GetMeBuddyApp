@@ -1,37 +1,60 @@
 // src/navigation/index.js
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements';
-import { useSelector, useDispatch } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 // Auth screens
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 
+// Onboarding screens
+import UserTypeSelectionScreen from '../screens/onboarding/UserTypeSelectionScreen'; // New
+import ActivityPreferencesScreen from '../screens/onboarding/ActivityPreferencesScreen';
+import CompanionshipPreferencesScreen from '../screens/onboarding/CompanionshipPreferencesScreen'; // New
+import VerificationIntroScreen from '../screens/onboarding/VerificationIntroScreen'; // New
+
 // Main app screens
 import HomeScreen from '../screens/HomeScreen';
-import MatchesScreen from '../screens/MatchesScreen';
-import MessagesScreen from '../screens/MessagesScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import MatchesScreen from '../screens/matches/MatchesScreen';
+import MessagesScreen from '../screens/messages/MessagesScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 
-// Actions
-import { getCurrentUser } from '../store/actions/authActions';
+// Verification screens
+import BasicVerificationScreen from '../screens/verification/BasicVerificationScreen'; // New
+import EnhancedVerificationScreen from '../screens/verification/EnhancedVerificationScreen'; // New
+import PremiumVerificationScreen from '../screens/verification/PremiumVerificationScreen'; // New
+import VerificationStatusScreen from '../screens/verification/VerificationStatusScreen'; // New
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const OnboardingStack = createStackNavigator();
+const VerificationStack = createStackNavigator();
 
-const AuthNavigator = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Login" component={LoginScreen} />
-    <Stack.Screen name="Register" component={RegisterScreen} />
-    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-  </Stack.Navigator>
+// Onboarding navigation
+const OnboardingNavigator = () => (
+  <OnboardingStack.Navigator screenOptions={{ headerShown: false }}>
+    <OnboardingStack.Screen name="UserTypeSelection" component={UserTypeSelectionScreen} />
+    <OnboardingStack.Screen name="ActivityPreferences" component={ActivityPreferencesScreen} />
+    <OnboardingStack.Screen name="CompanionshipPreferences" component={CompanionshipPreferencesScreen} />
+    <OnboardingStack.Screen name="VerificationIntro" component={VerificationIntroScreen} />
+  </OnboardingStack.Navigator>
 );
 
+// Verification navigation
+const VerificationNavigator = () => (
+  <VerificationStack.Navigator>
+    <VerificationStack.Screen name="VerificationStatus" component={VerificationStatusScreen} options={{ title: 'Verification Center' }} />
+    <VerificationStack.Screen name="BasicVerification" component={BasicVerificationScreen} options={{ title: 'Basic Verification' }} />
+    <VerificationStack.Screen name="EnhancedVerification" component={EnhancedVerificationScreen} options={{ title: 'Enhanced Verification' }} />
+    <VerificationStack.Screen name="PremiumVerification" component={PremiumVerificationScreen} options={{ title: 'Premium Verification' }} />
+  </VerificationStack.Navigator>
+);
+
+// Main tab navigation
 const MainTabNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
@@ -64,35 +87,37 @@ const MainTabNavigator = () => (
 );
 
 const AppNavigator = () => {
-  const { isAuthenticated } = useSelector(state => state.auth);
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    // Check if user is logged in
-    const checkAuth = async () => {
-      try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (token) {
-          await dispatch(getCurrentUser());
-        }
-      } catch (error) {
-        console.log('Authentication error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    checkAuth();
-  }, [dispatch]);
-  
-  if (loading) {
-    return null; // Could show a splash screen here
-  }
+  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { onboardingCompleted } = useSelector(state => state.profile);
   
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainTabNavigator /> : <AuthNavigator />}
+      {!isAuthenticated ? (
+        // Auth flows
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        </Stack.Navigator>
+      ) : !onboardingCompleted ? (
+        // Onboarding flows
+        <OnboardingNavigator />
+      ) : (
+        // Main app
+        <Stack.Navigator>
+          <Stack.Screen 
+            name="Main" 
+            component={MainTabNavigator} 
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="Verification" 
+            component={VerificationNavigator}
+            options={{ headerShown: false }}
+          />
+          {/* Add other stack screens here */}
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 };
