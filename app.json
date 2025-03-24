@@ -1,4 +1,50 @@
 {
   "name": "GetMeBuddyApp",
-  "displayName": "GetMeBuddyApp"
+  "displayName": "GetMeBuddy",
+  "expo": {
+    "name": "GetMeBuddy",
+    "slug": "get-me-buddy",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4A80F0"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.getmebuddy.app",
+      "buildNumber": "2.0.0",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "GetMeBuddy uses your location to find activity partners and companions near you, and for safety features.",
+        "NSCameraUsageDescription": "GetMeBuddy uses your camera for profile photos and verification.",
+        "NSPhotoLibraryUsageDescription": "GetMeBuddy accesses your photo library for profile photos."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#4A80F0"
+      },
+      "package": "com.getmebuddy.app",
+      "versionCode": 2,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "description": "GetMeBuddy connects you with verified activity partners and companions."
+  }
 }
