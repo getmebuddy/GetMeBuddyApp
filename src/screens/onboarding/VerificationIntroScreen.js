@@ -1,11 +1,9 @@
-// src/screens/onboarding/VerificationIntroScreen.js
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Button } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { completeOnboarding } from '../../store/actions/profileActions';
-import { COLORS } from '../../styles/colors';
 
 const VerificationIntroScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -26,46 +24,22 @@ const VerificationIntroScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Image 
-          source={require('../../assets/images/verification_intro.png')}
-          style={styles.headerImage}
-          resizeMode="contain"
-        />
-        
         <Text style={styles.title}>Trust & Safety Verification</Text>
         <Text style={styles.subtitle}>
           GetMeBuddy prioritizes your safety with our comprehensive verification system
         </Text>
         
-        <View style={styles.featureContainer}>
-          <View style={styles.feature}>
-            <Icon name="check-circle" type="material" size={24} color={COLORS.primary} />
-            <Text style={styles.featureText}>Basic verification for all users</Text>
-          </View>
-          
-          <View style={styles.feature}>
-            <Icon name="check-circle" type="material" size={24} color={COLORS.primary} />
-            <Text style={styles.featureText}>Enhanced verification for more trust</Text>
-          </View>
-          
-          {isCompanionType && (
-            <View style={styles.feature}>
-              <Icon name="check-circle" type="material" size={24} color={COLORS.primary} />
-              <Text style={styles.featureText}>Premium verification required for companions</Text>
-            </View>
-          )}
-          
-          <View style={styles.feature}>
-            <Icon name="check-circle" type="material" size={24} color={COLORS.primary} />
-            <Text style={styles.featureText}>Verification badges build confidence</Text>
-          </View>
+        <View style={styles.placeholderContainer}>
+          <Text style={styles.placeholderText}>
+            Verification introduction content will appear here.
+          </Text>
         </View>
         
-        <View style={styles.requiredSection}>
-          <Text style={styles.requiredTitle}>Required Verification</Text>
-          <Text style={styles.requiredText}>
+        <View style={styles.infoBox}>
+          <Text style={styles.infoTitle}>Required Verification</Text>
+          <Text style={styles.infoText}>
             {isCompanionType 
-              ? 'As a companion, you'll need to complete all verification levels before being visible to others.' 
+              ? 'As a companion, you will need to complete all verification levels before being visible to others.' 
               : 'Basic verification is required for all users to ensure safety.'}
           </Text>
         </View>
@@ -99,17 +73,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     padding: 20,
-    alignItems: 'center',
-  },
-  headerImage: {
-    width: '80%',
-    height: 200,
-    marginVertical: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: '#4A80F0',
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -119,52 +87,50 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: 'center',
   },
-  featureContainer: {
-    width: '100%',
-    marginBottom: 30,
-  },
-  feature: {
-    flexDirection: 'row',
+  placeholderContainer: {
+    padding: 20,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 10,
+    marginVertical: 20,
     alignItems: 'center',
-    marginVertical: 8,
+    justifyContent: 'center',
+    height: 200,
   },
-  featureText: {
-    marginLeft: 10,
+  placeholderText: {
     fontSize: 16,
-    color: COLORS.text,
+    color: '#888',
+    textAlign: 'center',
   },
-  requiredSection: {
-    width: '100%',
+  infoBox: {
     backgroundColor: '#f0f7ff',
     padding: 15,
     borderRadius: 10,
     marginBottom: 30,
   },
-  requiredTitle: {
+  infoTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: '#4A80F0',
     marginBottom: 8,
   },
-  requiredText: {
+  infoText: {
     fontSize: 14,
     color: '#555',
   },
   buttonContainer: {
-    width: '100%',
     marginBottom: 15,
   },
   button: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: '#4A80F0',
     borderRadius: 25,
     height: 50,
   },
   skipButtonContainer: {
-    width: '100%',
+    marginBottom: 20,
   },
   skipButtonTitle: {
     color: '#888',
-  },
+  }
 });
 
 export default VerificationIntroScreen;

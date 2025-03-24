@@ -1,10 +1,10 @@
-// src/navigation/index.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Auth screens
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -12,10 +12,10 @@ import RegisterScreen from '../screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 
 // Onboarding screens
-import UserTypeSelectionScreen from '../screens/onboarding/UserTypeSelectionScreen'; // New
+import UserTypeSelectionScreen from '../screens/onboarding/UserTypeSelectionScreen';
 import ActivityPreferencesScreen from '../screens/onboarding/ActivityPreferencesScreen';
-import CompanionshipPreferencesScreen from '../screens/onboarding/CompanionshipPreferencesScreen'; // New
-import VerificationIntroScreen from '../screens/onboarding/VerificationIntroScreen'; // New
+import CompanionshipPreferencesScreen from '../screens/onboarding/CompanionshipPreferencesScreen';
+import VerificationIntroScreen from '../screens/onboarding/VerificationIntroScreen';
 
 // Main app screens
 import HomeScreen from '../screens/HomeScreen';
@@ -24,10 +24,10 @@ import MessagesScreen from '../screens/messages/MessagesScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 
 // Verification screens
-import BasicVerificationScreen from '../screens/verification/BasicVerificationScreen'; // New
-import EnhancedVerificationScreen from '../screens/verification/EnhancedVerificationScreen'; // New
-import PremiumVerificationScreen from '../screens/verification/PremiumVerificationScreen'; // New
-import VerificationStatusScreen from '../screens/verification/VerificationStatusScreen'; // New
+import VerificationStatusScreen from '../screens/verification/VerificationStatusScreen';
+
+// Actions
+import { getCurrentUser } from '../store/actions/authActions';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,10 +47,12 @@ const OnboardingNavigator = () => (
 // Verification navigation
 const VerificationNavigator = () => (
   <VerificationStack.Navigator>
-    <VerificationStack.Screen name="VerificationStatus" component={VerificationStatusScreen} options={{ title: 'Verification Center' }} />
-    <VerificationStack.Screen name="BasicVerification" component={BasicVerificationScreen} options={{ title: 'Basic Verification' }} />
-    <VerificationStack.Screen name="EnhancedVerification" component={EnhancedVerificationScreen} options={{ title: 'Enhanced Verification' }} />
-    <VerificationStack.Screen name="PremiumVerification" component={PremiumVerificationScreen} options={{ title: 'Premium Verification' }} />
+    <VerificationStack.Screen 
+      name="VerificationStatus" 
+      component={VerificationStatusScreen} 
+      options={{ title: 'Verification Center' }}
+    />
+    {/* More verification screens will be added later */}
   </VerificationStack.Navigator>
 );
 
@@ -87,8 +89,32 @@ const MainTabNavigator = () => (
 );
 
 const AppNavigator = () => {
-  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const { onboardingCompleted } = useSelector(state => state.profile);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Check if user is logged in
+    const checkAuth = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token) {
+          await dispatch(getCurrentUser());
+        }
+      } catch (error) {
+        console.log('Authentication error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [dispatch]);
+  
+  if (loading) {
+    return null; // Could show a splash screen here
+  }
   
   return (
     <NavigationContainer>

@@ -1,4 +1,3 @@
-// src/store/reducers/profileReducer.js
 import {
   UPDATE_PROFILE_REQUEST,
   UPDATE_PROFILE_SUCCESS,
