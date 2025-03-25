@@ -55,6 +55,17 @@ const UserTypeSelectionScreen = ({ navigation }) => {
           Use GetMeBuddy for both activities and companionship
         </Text>
       </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.optionCard} 
+        onPress={() => handleSelection('activity')}
+      >
+        <Icon name="directions-run" type="material" size={30} color="#4A80F0" />
+        <Text style={styles.optionTitle}>Find Activity Partners</Text>
+        <Text style={styles.optionDescription}>
+          Connect with verified buddies for hiking, gaming, sports, or any activity you enjoy
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
