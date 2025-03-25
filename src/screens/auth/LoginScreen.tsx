@@ -1,6 +1,7 @@
 // src/screens/auth/LoginScreen.js
 import React, { useState } from 'react';
-import { 
+import {
+  NativeStackNavigationProp,
   View, 
   Text, 
   StyleSheet, 
@@ -14,7 +15,12 @@ import { Input, Button, Icon } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../store/actions/authActions';
 
-const LoginScreen = ({ navigation }) => {
+type LoginScreenNavigationProp = NativeStackNavigationProp<any, 'Login'>;
+
+interface LoginScreenProps {
+  navigation: LoginScreenNavigationProp;
+}
+const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

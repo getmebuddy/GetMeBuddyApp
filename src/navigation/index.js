@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Auth screens
-import LoginScreen from '../screens/auth/LoginScreen';
+import LoginScreen from '../screens/auth/LoginScreen.tsx';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 
