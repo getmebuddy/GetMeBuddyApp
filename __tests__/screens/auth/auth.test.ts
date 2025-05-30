@@ -1,18 +1,19 @@
-import { authAPI, UserRegistrationData, UserLoginData, AuthResponse, User } from '../../../src/api/auth'; // Assuming types are exported from auth API module
-// import fetchMock from 'jest-fetch-mock';
+import { authAPI, UserRegistrationData, UserLoginData, AuthResponse, User, ProfileUpdateData } from '../../../src/api/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../../../src/api/config'; // For checking refresh call
 
-// Define mocks for axios instance methods that apiClient will use
+// --- Axios Mock ---
 const mockApiPost = jest.fn();
 const mockApiGet = jest.fn();
 const mockApiPatch = jest.fn();
 const mockApiDelete = jest.fn();
+const mockRequestInterceptorUse = jest.fn();
+const mockResponseInterceptorUse = jest.fn();
 
-// Mock what axios.create() returns
 const mockAxiosInstance = {
   interceptors: {
-    request: { use: jest.fn(), eject: jest.fn() },
-    response: { use: jest.fn(), eject: jest.fn() },
+    request: { use: mockRequestInterceptorUse, eject: jest.fn() },
+    response: { use: mockResponseInterceptorUse, eject: jest.fn() },
   },
   get: mockApiGet,
   post: mockApiPost,
@@ -20,26 +21,26 @@ const mockAxiosInstance = {
   delete: mockApiDelete,
 };
 
-// Mock axios itself
-const mockCreate = jest.fn(() => mockAxiosInstance); // This is our spy for axios.create
+const mockAxiosCreate = jest.fn(() => mockAxiosInstance);
+const mockStaticPost = jest.fn(); // For mocking axios.post (used in token refresh)
+const mockStaticIsAxiosError = jest.fn((payload: any): payload is import('axios').AxiosError => !!payload && payload.isAxiosError === true);
 
-jest.mock('axios', () => ({
-  __esModule: true, // Indicate it's an ES module.
-  default: {         // The default export of the axios module.
-    create: mockCreate, // axios.default.create will be our spy.
-    get: jest.fn(),     // Mock top-level axios.default.get if ever used.
-    post: jest.fn(),    // Mock top-level axios.default.post if ever used.
-    isAxiosError: jest.fn((payload: any): payload is import('axios').AxiosError => !!payload && payload.isAxiosError === true), // Example for isAxiosError
-    // Add any other static/top-level methods of 'axios.default' your code might use.
-  },
-  // If your code also uses named exports from 'axios' like `import { isAxiosError } from 'axios'`, mock them here.
-  // For `import axios from 'axios'`, the `default` export above is what's typically used.
-  // To be safe, also providing create at the root if some import somehow bypasses default:
-  create: mockCreate,
-  isAxiosError: jest.fn((payload: any): payload is import('axios').AxiosError => !!payload && payload.isAxiosError === true),
-}));
 
-// Define a more specific type for the user in mock responses if not fully covered by User type from auth.ts
+jest.mock('axios', () => {
+  const actualAxiosModule = {
+    create: mockAxiosCreate,
+    post: mockStaticPost,
+    get: jest.fn(), // Add other static methods if used by main code
+    isAxiosError: mockStaticIsAxiosError,
+  };
+  return {
+    __esModule: true, // Needed for Babel's interop for `import axios from 'axios'`
+    default: actualAxiosModule,
+    ...actualAxiosModule, // Spread to cover cases where interop might not add .default
+  };
+});
+// --- End Axios Mock ---
+
 interface MockUser extends User {
   first_name?: string;
   last_name?: string;
@@ -51,86 +52,110 @@ interface MockAuthResponse extends AuthResponse {
 
 describe('Auth API', () => {
   beforeEach(() => {
-    // Reset all mock implementations and call history
     mockApiGet.mockReset();
     mockApiPost.mockReset();
     mockApiPatch.mockReset();
     mockApiDelete.mockReset();
-    mockCreate.mockClear(); // Clear calls to axios.create itself if needed for some tests
-    // AsyncStorage mocks are typically handled by jest.setup.ts or auto-mocks
+    mockRequestInterceptorUse.mockReset();
+    mockResponseInterceptorUse.mockReset();
+    mockAxiosCreate.mockClear();
+    mockStaticPost.mockReset();
+    (AsyncStorage.setItem as jest.Mock).mockClear();
+    (AsyncStorage.getItem as jest.Mock).mockClear();
+    (AsyncStorage.removeItem as jest.Mock).mockClear();
+  });
+
+  it('should create an apiClient with interceptors when module loads', () => {
+    // The import of authAPI at the top of the file already causes src/api/auth.ts to load.
+    // This test verifies that axios.create and interceptor setup occurred during that load.
+    expect(mockAxiosCreate).toHaveBeenCalled();
+    expect(mockRequestInterceptorUse).toHaveBeenCalled();
+    expect(mockResponseInterceptorUse).toHaveBeenCalled();
   });
 
   it('should register a user successfully', async () => {
-    const mockApiResponse: MockAuthResponse = {
-      user: {
-        id: 1,
-        email: 'test@example.com',
-        first_name: 'Test',
-        last_name: 'User',
-      },
-      refresh: 'refresh-token',
+    const mockApiResponseData: RegisterResponse = {
+      user: { id: "1", name: 'Test User', email: 'test@example.com', isActive: true, joinedDate: new Date().toISOString(), userType: {activityPartner:true, companion:false}, verificationLevel: 'basic' },
       access: 'access-token',
+      refresh: 'refresh-token',
     };
-
-    mockApiPost.mockResolvedValueOnce({ data: mockApiResponse }); // authAPI uses apiClient.post which is mockApiPost
+    mockApiPost.mockResolvedValueOnce({ data: mockApiResponseData });
 
     const userData: UserRegistrationData = {
-      email: 'test@example.com',
-      first_name: 'Test',
-      last_name: 'User',
-      password: 'password123',
-      password_confirm: 'password123',
+      email: 'test@example.com', first_name: 'Test', last_name: 'User', password: 'password123'
     };
+    const response = await authAPI.register(userData);
 
-    const responseData = await authAPI.register(userData);
-
-    expect(responseData).toEqual(mockApiResponse);
-    expect(mockApiPost).toHaveBeenCalledWith(
-      expect.stringContaining('/users/register/'),
-      userData,
-      expect.any(Object)
-    );
+    expect(response.data).toEqual(mockApiResponseData);
+    expect(mockApiPost).toHaveBeenCalledWith('/users/register/', userData);
   });
 
   it('should login a user and store tokens', async () => {
-    const mockLoginResponse: AuthResponse = {
-      user: {
-        id: 1,
-        email: 'test@example.com',
-      },
-      refresh: 'refresh-token',
+    const mockLoginResponseData: LoginResponse = {
+      user: { id: "1", name: 'Test User', email: 'test@example.com', isActive: true, joinedDate: new Date().toISOString(), userType: {activityPartner:true, companion:false}, verificationLevel: 'basic' },
       access: 'access-token',
+      refresh: 'refresh-token',
     };
+    mockApiPost.mockResolvedValueOnce({ data: mockLoginResponseData });
 
-    mockApiPost.mockResolvedValueOnce({ data: mockLoginResponse }); // authAPI uses apiClient.post which is mockApiPost
+    const loginCredentials = { email: 'test@example.com', password: 'password123' };
+    const response = await authAPI.login(loginCredentials.email, loginCredentials.password);
 
-    const loginData: UserLoginData = {
-      email: 'test@example.com',
-      password: 'password123',
-    };
-
-    const responseData = await authAPI.login(loginData.email, loginData.password);
-
-    expect(responseData).toEqual(mockLoginResponse);
+    expect(response.data).toEqual(mockLoginResponseData);
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('accessToken', 'access-token');
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('refreshToken', 'refresh-token');
-    expect(mockApiPost).toHaveBeenCalledWith(
-      expect.stringContaining('/token/'),
-      loginData,
-      expect.any(Object)
-    );
+    expect(mockApiPost).toHaveBeenCalledWith('/token/', loginCredentials);
   });
 
   it('should logout a user and remove tokens', async () => {
-    // authAPI.logout primarily clears AsyncStorage and doesn't make a network request in its current form.
-    // If it did, we would mock it:
-    // mockedAxios.post.mockResolvedValueOnce({});
-
     await authAPI.logout();
-
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith('accessToken');
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith('refreshToken');
-    // If authAPI.logout made a call:
-    // expect(mockedAxios.post).toHaveBeenCalledWith(expect.stringContaining('/users/logout/'), expect.anything());
+  });
+
+  it('should get current user', async () => {
+    const mockUserData: UserProfile = { id: "1", name: 'Test User', email: 'test@example.com', isActive: true, joinedDate: new Date().toISOString(), userType: {activityPartner:true, companion:false}, verificationLevel: 'basic' };
+    mockApiGet.mockResolvedValueOnce({ data: mockUserData });
+
+    const response = await authAPI.getCurrentUser();
+    expect(response.data).toEqual(mockUserData);
+    expect(mockApiGet).toHaveBeenCalledWith('/users/me/');
+  });
+
+  it('should handle token refresh on 401 error', async () => {
+    const originalRequestConfig = {
+      url: '/some/protected/route',
+      headers: {},
+      _retry: false
+    } as any; // Type as any for _retry property for testing
+
+    const errorResponse = {
+      config: originalRequestConfig,
+      response: { status: 401 },
+      isAxiosError: true,
+    };
+    const refreshResponseData = { access: 'new-access-token', refresh: 'new-refresh-token' };
+    const retryResponseData = { message: 'success on retry' };
+
+    mockApiGet.mockRejectedValueOnce(errorResponse); // Initial call fails
+    mockStaticPost.mockResolvedValueOnce({ data: refreshResponseData }); // axios.post for refresh
+    mockApiGet.mockResolvedValueOnce({ data: retryResponseData }); // Retried call with apiClient
+
+    // Get the actual error handler from the interceptor setup
+    // This assumes the response interceptor error handler is the second argument to the first call to mockResponseInterceptorUse
+    const responseErrorHandler = mockResponseInterceptorUse.mock.calls[0]?.[1];
+    if (!responseErrorHandler) {
+      throw new Error("Response error handler for interceptor not found or not mocked correctly.");
+    }
+
+    // We expect the interceptor to handle the error and retry, ultimately resolving.
+    // If the interceptor re-throws an error (e.g., refresh fails), this test would need a catch.
+    await responseErrorHandler(errorResponse);
+
+    expect(mockStaticPost).toHaveBeenCalledWith(`${API_URL}/token/refresh/`, { refresh: undefined }); // refreshToken from AsyncStorage (mocked to return undefined for getItem by default)
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith('accessToken', 'new-access-token');
+    expect(originalRequestConfig.headers['Authorization']).toBe('Bearer new-access-token');
+    // This checks if the *original* request was retried by the interceptor using the *apiClient* instance
+    expect(mockApiGet).toHaveBeenCalledWith(originalRequestConfig);
   });
 });

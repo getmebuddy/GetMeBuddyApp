@@ -195,22 +195,7 @@ const styles = StyleSheet.create({
   logoutText: { flex: 1, marginLeft: SPACING.medium, ...TYPOGRAPHY.body, color: COLORS.danger, fontWeight: '600' },
 });
 
-// Fallback style definitions
-const TYPOGRAPHY = {
-  h1: { fontSize: 24, fontWeight: 'bold' }, h2: { fontSize: 20, fontWeight: 'bold' }, subtitle: { fontSize: 16, fontWeight: '600' },
-  body: { fontSize: 14 }, caption: { fontSize: 12 }, buttonSmall: { fontSize: 14, fontWeight: 'bold', color: COLORS.white || '#FFF' },
-  button: { fontSize: 16, fontWeight: 'bold', color: COLORS.white || '#FFF' },
-  ...TYPOGRAPHY,
-};
-const SPACING = {
-  xsmall: 4, small: 8, medium: 16, large: 24,
-  ...SPACING,
-};
-const COLORS = {
-  primary: '#4A80F0', white: '#FFFFFF', black: '#000000', text: '#333333', textEmphasis: '#111111', textSecondary: '#555555',
-  grey100: '#F3F4F6', grey200: '#E5E7EB', grey400: '#9CA3AF', grey600: '#4B5563',
-  background: '#F4F6F8', lightPrimary: '#E0E7FF', danger: '#D32F2F', success: '#28a745',
-  ...COLORS,
-};
+// Fallback style definitions have been removed.
+// Assuming TYPOGRAPHY, SPACING, COLORS are correctly imported and typed from their source files.
 
 export default ProfileScreen;
