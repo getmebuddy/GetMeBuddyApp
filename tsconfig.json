@@ -1,29 +1,75 @@
 {
   "compilerOptions": {
+    // Target modern ECMAScript features, Babel will handle downleveling
     "target": "esnext",
-    "module": "commonjs",
-    "lib": ["es2019"],
-    "allowJs": true,
-    "jsx": "react-native",
+    // Use ES modules for tree shaking and modern compatibility
+    "module": "esnext",
+    // Standard libraries to include
+    "lib": ["dom", "esnext"],
+    // Do not allow JavaScript files to be compiled (enforce TypeScript only)
+    "allowJs": false,
+    // JSX configuration for React Native (new JSX transform)
+    "jsx": "react-jsx",
+    // TypeScript compiler should not emit JS; Babel handles transpilation
     "noEmit": true,
+    // Ensures each file can be safely transpiled without relying on other modules (good for Babel)
     "isolatedModules": true,
+    // Enable all strict type-checking options
     "strict": true,
+    // How modules are resolved (Node.js style)
     "moduleResolution": "node",
+    // Allow importing .json files
     "resolveJsonModule": true,
+    // Allow default imports from modules with no default export (for compatibility)
     "allowSyntheticDefaultImports": true,
+    // Enables allowSyntheticDefaultImports and other interop features
     "esModuleInterop": true,
+    // Skip type checking of all declaration files (*.d.ts)
     "skipLibCheck": true,
+    // Base directory for resolving non-absolute module names
     "baseUrl": "./",
+    // Path mapping for module resolution (can simplify imports)
     "paths": {
-      "*": ["src/*"]
+      "*": ["src/*"], // Allows imports like 'components/MyComponent' from anywhere
+      // Define specific paths if needed, e.g., "@components/*": ["src/components/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    // Locations for type declaration files
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    // Ensures that casing is correct in imports
+    "forceConsistentCasingInFileNames": true,
+    // Report errors for fallthrough cases in switch statement
+    "noFallthroughCasesInSwitch": true,
+    // Report errors on unused locals
+    "noUnusedLocals": true,
+    // Report errors on unused parameters
+    "noUnusedParameters": true,
+    // Ensures 'this' is typed in functions
+    "noImplicitThis": true,
+    // Disallow `any` type in places where it's not explicitly declared
+    "noImplicitAny": true, // Part of 'strict', but good to be aware of
   },
+  "include": [
+    "src/**/*", // All TypeScript files within src
+    "index.ts",    // Root entry point
+    "app.tsx",     // Root App component
+    "jest.setup.ts"// Jest setup file for type checking
+    // Add any other specific .ts/.tsx files at the root or other locations if needed
+  ],
   "exclude": [
     "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js"
-  ],
-  "include": ["src/**/*"]
+    "babel.config.cjs",
+    "metro.config.cjs",
+    "jest.config.cjs",
+    ".eslintrc.cjs",
+    // Add any build output directories or other non-source files
+    "android",
+    "ios",
+    "__tests__" // Test files are usually handled by Jest/Babel, not directly compiled by tsc for emit
+                // but including them in tsconfig allows for type-checking them.
+                // If you want to strictly exclude them from 'tsc' command consideration (though noEmit is true),
+                // you can keep this. However, for VS Code intellisense, it's often better to let TS see them.
+                // For this setup, let's assume tests are type-checked as part of the "include" via src/**/* if they are there,
+                // or if a specific "tests" glob is added to include.
+                // Given the previous task included __tests__ in the project, let's not exclude them here.
+  ]
 }
