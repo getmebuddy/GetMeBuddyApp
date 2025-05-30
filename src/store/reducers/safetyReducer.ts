@@ -59,7 +59,7 @@ const safetyReducer = (
 
     case REPORT_USER_SUCCESS: // Payload is { message: string }
       return { ...state, loadingAction: false, error: null };
-    
+
     case REPORT_USER_FAILURE:
     case BLOCK_USER_FAILURE: // Handled by error
     case UNBLOCK_USER_FAILURE:
@@ -71,7 +71,7 @@ const safetyReducer = (
       // Add to blockedUsers list if not already present (though API call is source of truth)
       // Or simply rely on re-fetching the list via fetchBlockedUsers()
       return { ...state, loadingAction: false, error: null, /* consider re-fetching blocked users */ };
-    
+
     case UNBLOCK_USER_SUCCESS: // Payload is { unblockedUserId: string | number }
       return {
         ...state,

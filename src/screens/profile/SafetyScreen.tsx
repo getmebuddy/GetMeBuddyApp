@@ -111,7 +111,7 @@ const SafetyScreen: React.FC<SafetyScreenProps> = ({ navigation }) => {
     // navigation.navigate('ReportConcern'); // Assuming 'ReportConcern' is a screen in AppStackParamList
     Alert.alert("Navigate", "Navigate to Report Concern Screen (placeholder)");
   };
-  
+
   const handleNavigateToResource = (resourceName: string) => {
     Alert.alert("Navigate", `Navigate to ${resourceName} (placeholder)`);
   };

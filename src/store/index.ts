@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, combineReducers, Action, AnyAction, Middleware } from 'redux';
-import thunk, { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import thunk from 'redux-thunk'; // Revert to standard ES6 import
+import type { ThunkAction, ThunkDispatch } from 'redux-thunk'; // Import types separately
 // Import logger if you use it, e.g., import logger from 'redux-logger';
 
 // Import all typed reducers
@@ -47,7 +48,7 @@ export type AppThunk<ReturnType = void, BasicActionType extends Action = AnyActi
 
 // Middlewares array
 // Add other middlewares like redux-logger here if needed
-const middlewares: Middleware[] = [thunk as Middleware]; // Cast thunk as Middleware if type inference issues
+const middlewares: Middleware[] = [thunk as Middleware]; // Use thunk directly, with cast
 
 // Create store
 const store = createStore(

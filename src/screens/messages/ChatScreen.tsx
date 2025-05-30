@@ -64,13 +64,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route, navigation }) => {
 
   const user = useSelector((state: RootState) => state.auth.user as AuthUser | null); // AuthUser or null
   const { messages: storeMessages, loading } = useSelector((state: RootState) => state.messages as { messages: MessageType[] | null; loading: boolean });
-  
+
   const [messageText, setMessageText] = useState<string>('');
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [attachment, setAttachment] = useState<AttachmentFile | null>(null);
-  
+
   // Typing indicator state, not fully implemented with backend
-  const [isTyping, setIsTyping] = useState<boolean>(false); 
+  const [isTyping, setIsTyping] = useState<boolean>(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route, navigation }) => {
     useCallback(() => {
       if (conversationId) loadMessages(true);
       // const intervalId = setInterval(() => { if(conversationId) loadMessages(false); }, 10000); // Consider WebSocket instead of polling
-      return () => { 
+      return () => {
         // clearInterval(intervalId);
         if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       };
@@ -150,7 +150,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route, navigation }) => {
       }
     });
   };
-  
+
   const handleRemoveAttachment = () => setAttachment(null);
 
   const handleViewProfile = () => {

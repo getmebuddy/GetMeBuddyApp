@@ -74,7 +74,7 @@ export const messagesAPI = {
       last_read_message_id: lastReadMessageId,
     });
   },
-  
+
   // Deletes a message (soft or hard delete)
   deleteMessage: (messageId: string | number): Promise<AxiosResponse<{ success: boolean }>> => {
     return apiClient.delete(`/messaging/messages/${messageId}/`);

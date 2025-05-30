@@ -30,8 +30,8 @@ const VerificationIntroScreen: React.FC<VerificationIntroScreenProps> = ({ navig
     // as verification might be a separate flow they can exit and return to.
     // Or, completeOnboarding could be called AFTER verification is done.
     // For now, assuming completing onboarding means finishing preference screens.
-    dispatch(completeOnboarding()); 
-    
+    dispatch(completeOnboarding());
+
     // Navigate to the Verification stack/screen within the main app structure
     // This assumes 'Verification' is a navigator or screen in AppStackParamList
     navigation.getParent<StackScreenProps<AppStackParamList>['navigation']>()?.replace('Verification', { screen: 'VerificationStatus' });
@@ -152,22 +152,7 @@ const styles = StyleSheet.create({
   skipButtonTitle: { color: COLORS.grey600, ...TYPOGRAPHY.button, fontSize: 14 },
 });
 
-// Fallback style definitions
-const TYPOGRAPHY = {
-  h1: { fontSize: 26, fontWeight: 'bold' }, h2: { fontSize: 20, fontWeight: 'bold' }, h3: { fontSize: 18, fontWeight: '600' },
-  subtitle: { fontSize: 16 }, body: { fontSize: 14 },
-  button: { fontSize: 16, fontWeight: 'bold', color: COLORS.white || '#FFF' },
-  ...TYPOGRAPHY,
-};
-const SPACING = {
-  xsmall: 4, small: 8, medium: 16, large: 24,
-  ...SPACING,
-};
-const COLORS = {
-  primary: '#4A80F0', white: '#FFFFFF', black: '#000000', text: '#333333', textSecondary: '#555',
-  grey600: '#4B5563', grey700: '#374151', success: '#28A745', 
-  lightSuccessBackground: '#E6FFFA', lightPrimaryBackground: '#E0E7FF',
-  ...COLORS,
-};
+// Fallback style definitions have been removed.
+// Assuming TYPOGRAPHY, SPACING, COLORS are correctly imported and typed from their source files.
 
 export default VerificationIntroScreen;

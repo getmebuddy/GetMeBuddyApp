@@ -64,7 +64,7 @@ const ActivityPreferencesScreen: React.FC<ActivityPreferencesScreenProps> = ({ n
       } else {
         // This case should ideally not be reached if userType is 'companionship' only,
         // as they might skip this screen. Or, it's a fallback.
-        navigation.navigate('CompanionshipPreferences'); 
+        navigation.navigate('CompanionshipPreferences');
       }
     } catch (error) {
       console.error("Failed to save activity preferences:", error);
@@ -101,7 +101,7 @@ const ActivityPreferencesScreen: React.FC<ActivityPreferencesScreenProps> = ({ n
                 <Text style={styles.skillLabel}>{category}:</Text>
                 <View style={styles.skillButtons}>
                     {SKILL_OPTIONS.map(level => (
-                        <Button 
+                        <Button
                             key={level}
                             title={level.charAt(0).toUpperCase() + level.slice(1)}
                             type={skillLevels[category] === level ? "solid" : "outline"}
@@ -115,10 +115,10 @@ const ActivityPreferencesScreen: React.FC<ActivityPreferencesScreenProps> = ({ n
             ))}
           </>
         )}
-        
+
         <Text style={styles.sectionTitle}>Preferred Group Size</Text>
         {/* Example: Radio buttons or a segmented control for group size */}
-        <View style={styles.skillButtons}> 
+        <View style={styles.skillButtons}>
             {(['solo', 'duo', 'small_group', 'large_group'] as const).map(size => (
                 <Button
                     key={size}
@@ -142,7 +142,7 @@ const ActivityPreferencesScreen: React.FC<ActivityPreferencesScreenProps> = ({ n
           inputContainerStyle={styles.inputContainer}
           inputStyle={styles.inputText}
         />
-        
+
         <Button
           title="Continue"
           containerStyle={styles.buttonContainer}
@@ -177,21 +177,7 @@ const styles = StyleSheet.create({
   button: { backgroundColor: COLORS.primary, borderRadius: 25, height: 50 },
 });
 
-// Fallback style definitions
-const TYPOGRAPHY = {
-  h1: { fontSize: 24, fontWeight: 'bold' }, h2: { fontSize: 20, fontWeight: 'bold' },
-  subtitle: { fontSize: 16, color: '#666' }, body: { fontSize: 14 }, caption: { fontSize: 12 },
-  button: { fontSize: 16, fontWeight: 'bold', color: COLORS.white || '#FFF' },
-  ...TYPOGRAPHY,
-};
-const SPACING = {
-  xsmall: 4, small: 8, medium: 16, large: 24,
-  ...SPACING,
-};
-const COLORS = {
-  primary: '#4A80F0', white: '#FFFFFF', text: '#333333',
-  grey200: '#E5E7EB', grey700: '#374151',
-  ...COLORS,
-};
+// Fallback style definitions have been removed.
+// Assuming TYPOGRAPHY, SPACING, COLORS are correctly imported and typed from their source files.
 
 export default ActivityPreferencesScreen;

@@ -6,7 +6,7 @@ import { Icon } from 'react-native-elements';
 
 import { getVerificationStatus } from '../../store/actions/verificationActions'; // Assume typed
 // Assuming VerificationCard is or will be a typed component
-import VerificationCard, { VerificationItem } from '../../components/verification/VerificationCard'; 
+import VerificationCard, { VerificationItem } from '../../components/verification/VerificationCard';
 
 import { AppDispatch, RootState } from '../../store';
 import { UserProfile, VerificationLevel } from '../../models/UserProfile';
@@ -37,7 +37,7 @@ type VerificationHomeScreenProps = StackScreenProps<VerificationStackParamList, 
 
 const VerificationHomeScreen: React.FC<VerificationHomeScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch<AppDispatch>();
-  
+
   const user = useSelector((state: RootState) => state.auth.user as UserProfile | null);
   const verificationStatus = useSelector((state: RootState) => state.verification.verificationStatus as UserVerificationStatus | null);
   const loading = useSelector((state: RootState) => state.verification.loading);
@@ -63,7 +63,7 @@ const VerificationHomeScreen: React.FC<VerificationHomeScreenProps> = ({ navigat
       { label: 'Liveness Check / Video Selfie', isComplete: verificationStatus?.videoVerified || false },
       // { label: 'Social Media Accounts Linked', isComplete: verificationStatus?.socialVerified || false },
     ];
-    
+
     const premiumItems: VerificationItem[] = [
       { label: 'Background Check Passed', isComplete: verificationStatus?.backgroundVerified || false },
       // { label: 'Reference Checks Complete', isComplete: verificationStatus?.referencesVerified || false },
@@ -102,7 +102,7 @@ const VerificationHomeScreen: React.FC<VerificationHomeScreenProps> = ({ navigat
   if (loading && !verificationStatus) {
     return <SafeAreaView style={styles.loadingContainer}><ActivityIndicator size="large" color={COLORS.primary} /><Text style={styles.loadingText}>Loading status...</Text></SafeAreaView>;
   }
-  
+
   const currentVerificationLevel = verificationStatus?.level || 'Incomplete';
   const levelColor = currentVerificationLevel === 'premium' ? COLORS.success : currentVerificationLevel === 'enhanced' ? COLORS.warning : currentVerificationLevel === 'basic' ? COLORS.primary : COLORS.grey500;
 
@@ -114,7 +114,7 @@ const VerificationHomeScreen: React.FC<VerificationHomeScreenProps> = ({ navigat
           <Text style={styles.title}>Verification Center</Text>
           <Text style={styles.subtitle}>Enhance your profile's trust and safety by completing verification steps.</Text>
       </View>
-      
+
       <View style={styles.statusOverviewCard}>
         <Text style={styles.statusTitle}>Your Current Verification Level</Text>
         <View style={[styles.statusBadge, { backgroundColor: levelColor }]}>

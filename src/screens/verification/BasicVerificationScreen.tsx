@@ -90,7 +90,7 @@ const BasicVerificationScreen: React.FC<BasicVerificationScreenProps> = ({ navig
 
   const handleVerifyEmailWithCode = async () => {
     if (!emailCode.trim() || emailCode.length < 6) { Alert.alert("Validation", "Please enter a valid 6-digit code."); return; }
-    try { await dispatch(verifyEmail(email, emailCode)); setEmailSent(false); /* setEmailCode(''); // Optional: clear code on success */ } 
+    try { await dispatch(verifyEmail(email, emailCode)); setEmailSent(false); /* setEmailCode(''); // Optional: clear code on success */ }
     catch (error) { console.error('Email verification failed:', error); Alert.alert("Error", "Email verification failed.");}
   };
 
@@ -106,7 +106,7 @@ const BasicVerificationScreen: React.FC<BasicVerificationScreenProps> = ({ navig
     try { await dispatch(verifyPhone(phone, phoneCode)); setPhoneSent(false); /* setPhoneCode(''); */ }
     catch (error) { console.error('Phone verification failed:', error); Alert.alert("Error", "Phone verification failed."); }
   };
-  
+
   const handleSubmitPhoto = async () => {
     if (photos.length === 0) { Alert.alert("Validation", "Please upload a photo."); return; }
     try { await dispatch(submitPhotoForVerification(photos[0])); /* setPhotos([]); */ } // Assuming action takes one photo

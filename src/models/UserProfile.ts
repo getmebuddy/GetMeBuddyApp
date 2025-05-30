@@ -43,15 +43,15 @@ export interface CompanionshipDetails {
 
 // Main User Profile Interface
 export interface UserProfile {
-  id: string; 
+  id: string;
   name: string;
-  email: string; 
-  username?: string; 
-  profilePictureUrl?: string; 
-  photos?: string[]; 
+  email: string;
+  username?: string;
+  profilePictureUrl?: string;
+  photos?: string[];
   bio?: string;
-  dateOfBirth?: string; 
-  age?: number; 
+  dateOfBirth?: string;
+  age?: number;
   gender?: 'male' | 'female' | 'non-binary' | 'other' | 'prefer_not_to_say';
   location?: {
     city?: string;
@@ -73,12 +73,12 @@ export interface UserProfile {
 
   interests?: string[];
   socialMediaLinks?: {
-    [platform: string]: string; 
+    [platform: string]: string;
   };
 
-  joinedDate: string; 
-  lastLoginDate?: string; 
-  isActive: boolean; 
+  joinedDate: string;
+  lastLoginDate?: string;
+  isActive: boolean;
 }
 
 // Simpler User type for summaries (consistent with other files)

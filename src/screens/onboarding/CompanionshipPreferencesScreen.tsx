@@ -71,7 +71,7 @@ const CompanionshipPreferencesScreen: React.FC<CompanionshipPreferencesScreenPro
 
     const detailsToSave: Partial<CompanionshipDetails> = {
       // Assuming conversationTopics field stores these types, adjust if model has a different field
-      conversationTopics: selectedCompanionTypes, 
+      conversationTopics: selectedCompanionTypes,
       personalityTraits: selectedPersonalityTraits,
     };
 
@@ -160,21 +160,7 @@ const styles = StyleSheet.create({
   button: { backgroundColor: COLORS.primary, borderRadius: 25, height: 50 },
 });
 
-// Fallback style definitions
-const TYPOGRAPHY = {
-  h1: { fontSize: 24, fontWeight: 'bold' }, h2: { fontSize: 20, fontWeight: 'bold' },
-  subtitle: { fontSize: 16 }, body: { fontSize: 14 },
-  button: { fontSize: 16, fontWeight: 'bold', color: COLORS.white || '#FFF' },
-  ...TYPOGRAPHY,
-};
-const SPACING = {
-  xsmall: 4, small: 8, medium: 16, large: 24,
-  ...SPACING,
-};
-const COLORS = {
-  primary: '#4A80F0', white: '#FFFFFF', text: '#333333',
-  grey600: '#4B5563', grey700: '#374151',
-  ...COLORS,
-};
+// Fallback style definitions have been removed.
+// Assuming TYPOGRAPHY, SPACING, COLORS are correctly imported and typed from their source files.
 
 export default CompanionshipPreferencesScreen;

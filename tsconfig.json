@@ -27,12 +27,11 @@
     // Skip type checking of all declaration files (*.d.ts)
     "skipLibCheck": true,
     // Base directory for resolving non-absolute module names
-    "baseUrl": "./",
+    // "baseUrl": "./", // Removing baseUrl
     // Path mapping for module resolution (can simplify imports)
-    "paths": {
-      "*": ["src/*"], // Allows imports like 'components/MyComponent' from anywhere
-      // Define specific paths if needed, e.g., "@components/*": ["src/components/*"]
-    },
+    // "paths": {
+    //   "*": ["src/*"],
+    // },
     // Locations for type declaration files
     "typeRoots": ["./node_modules/@types", "./src/types"],
     // Ensures that casing is correct in imports

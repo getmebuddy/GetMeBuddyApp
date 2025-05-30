@@ -66,7 +66,7 @@ interface MatchesScreenProps {
 const MatchesScreen: React.FC<MatchesScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { matches, loading } = useSelector((state: RootState) => state.matches as { matches: Match[] | null; loading: boolean });
-  
+
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
@@ -113,7 +113,7 @@ const MatchesScreen: React.FC<MatchesScreenProps> = ({ navigation }) => {
     // Adjust based on your actual navigation structure.
     navigation.navigate('Messages', { // This navigates to the 'Messages' tab
       screen: 'Chat', // Then to the 'Chat' screen within the MessagesTab's navigator
-      params: { 
+      params: {
         conversationId: String(matchId), // Or however you identify conversations
         recipientName: `${otherUser.first_name} ${otherUser.last_name}`,
         recipientAvatar: otherUser.avatar,
@@ -121,7 +121,7 @@ const MatchesScreen: React.FC<MatchesScreenProps> = ({ navigation }) => {
       },
     });
   };
-  
+
   const filterAndSetMatches = () => {
     if (!matches) {
       setFilteredMatches([]);
@@ -278,26 +278,7 @@ const styles = StyleSheet.create({
   // emptyButtonText: { ...TYPOGRAPHY.button, color: COLORS.white }, // Defined in TYPOGRAPHY.button
 });
 
-// Fallback style definitions (similar to previous screens)
-const TYPOGRAPHY = {
-  h1: { fontSize: 24, fontWeight: 'bold' },
-  h2: { fontSize: 20, fontWeight: 'bold' },
-  h3: { fontSize: 16, fontWeight: '600' },
-  body: { fontSize: 14 },
-  caption: { fontSize: 12 },
-  button: { fontSize: 16, fontWeight: 'bold', color: COLORS.white },
-  ...TYPOGRAPHY,
-};
-const SPACING = {
-  xsmall: 4, small: 8, medium: 16, large: 24, extraLarge: 32,
-  ...SPACING,
-};
-const COLORS = {
-  primary: '#4A80F0', background: '#F4F6F8', white: '#FFFFFF', black: '#000000',
-  text: '#333333', grey200: '#E5E7EB', grey400: '#9CA3AF', grey600: '#4B5563',
-  grey700: '#374151', lightGrey: '#F3F4F6', lightPrimary: '#E0E7FF', error: '#D32F2F',
-  success: '#28a745', warning: '#FB8C00', lightSuccess: '#E0F2F1',
-  ...COLORS,
-};
+// Fallback style definitions have been removed.
+// Assuming TYPOGRAPHY, SPACING, COLORS are correctly imported and typed from their source files.
 
 export default MatchesScreen;

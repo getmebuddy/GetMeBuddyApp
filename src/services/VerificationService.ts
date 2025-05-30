@@ -25,7 +25,7 @@ export interface ReferenceData {
   phone?: string;
   relationship: string; // e.g., 'Former Employer', 'Colleague'
   // Optional: a brief comment or statement from the reference if collected beforehand
-  statement?: string; 
+  statement?: string;
 }
 
 // Generic success response for simple verification steps
@@ -59,7 +59,7 @@ export const verificationService = {
   requestPhoneCode: (phone: string): Promise<AxiosResponse<{ message: string }>> => {
     return apiClient.post('/verification/phone/request_code/', { phone_number: phone });
   },
-  
+
   submitProfilePhoto: (photo: ImageFile): Promise<AxiosResponse<IdentityVerificationResponse>> => {
     const formData = new FormData();
     formData.append('photo', {
@@ -88,7 +88,7 @@ export const verificationService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
-  
+
   // Liveness check / video selfie
   submitLivenessVideo: (videoFile: ImageFile): Promise<AxiosResponse<IdentityVerificationResponse>> => {
     const formData = new FormData();
@@ -111,7 +111,7 @@ export const verificationService = {
   submitReferences: (references: ReferenceData[]): Promise<AxiosResponse<SimpleVerificationResponse>> => {
     return apiClient.post('/verification/references/submit/', { references });
   },
-  
+
   completeSafetyTraining: (quizAnswers: any): Promise<AxiosResponse<SimpleVerificationResponse>> => {
     // quizAnswers structure would depend on how the safety training is implemented
     return apiClient.post('/verification/safety_training/complete/', { answers: quizAnswers });

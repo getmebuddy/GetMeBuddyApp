@@ -36,7 +36,7 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({ route, navigation
   const dispatch = useDispatch<AppDispatch>();
   const authUser = useSelector((state: RootState) => state.auth.user as UserProfile | null); // Full UserProfile for auth user
   const { loading } = useSelector((state: RootState) => state.profile);
-  
+
   // route.params?.profile might contain the current profile data to edit
   // This could come from ProfileScreen to prefill the form
   const initialProfileData = route.params?.profileData || authUser;
@@ -122,7 +122,7 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({ route, navigation
       Alert.alert('Error', 'Failed to update profile. Please try again.');
     }
   };
-  
+
   const renderError = (field: keyof FormErrors) => errors[field] ? <Text style={styles.errorText}>{errors[field]}</Text> : null;
 
   return (

@@ -17,11 +17,10 @@ describe('Auth Reducer', () => {
   // Use the exported AuthState type for the initial state
   const initialState: AuthState = {
     user: null,
-    token: null, // Added token to AuthState based on common patterns
+    token: null,
+    isAuthenticated: false, // Match the reducer's initialState
     loading: false,
     error: null,
-    // isAuthenticated is often derived from token or user, so might not be in state directly
-    // or handled by a selector. If it's part of state, ensure it's in AuthState type.
   };
 
   it('should return the initial state for an unknown action', () => {
@@ -32,6 +31,7 @@ describe('Auth Reducer', () => {
     const action: AnyAction = { type: LOGIN_REQUEST };
     expect(authReducer(initialState, action)).toEqual({
       ...initialState,
+      isAuthenticated: false, // Ensure this is part of the expected state if initialState has it
       loading: true,
       error: null,
     });
@@ -50,6 +50,7 @@ describe('Auth Reducer', () => {
       loading: false,
       user: mockUser,
       token: mockToken,
+      isAuthenticated: true, // LOGIN_SUCCESS sets this to true
       error: null,
     });
   });
@@ -64,21 +65,22 @@ describe('Auth Reducer', () => {
       ...initialState,
       loading: false,
       error: errorMessage,
-      user: null, // Ensure user and token are cleared on failure
+      user: null,
       token: null,
+      isAuthenticated: false, // LOGIN_FAILURE sets this to false
     });
   });
 
   it('should handle LOGOUT', () => {
-    const loggedInState: AuthState = {
-      ...initialState,
+    const loggedInState: AuthState = { // This state should also include isAuthenticated
       user: { id: '1', email: 'test@example.com', name: 'Test User' },
       token: 'fake-access-token',
+      isAuthenticated: true,
+      loading: false,
+      error: null,
     };
     const action: AnyAction = { type: LOGOUT }; // Or LogoutAction
-    expect(authReducer(loggedInState, action)).toEqual({
-      ...initialState, // Resets to the initial state (user: null, token: null, etc.)
-    });
+    expect(authReducer(loggedInState, action)).toEqual(initialState); // LOGOUT resets to the exact initialState
   });
 
   // Example tests for registration actions (if applicable)
@@ -86,6 +88,7 @@ describe('Auth Reducer', () => {
     const action: AnyAction = { type: REGISTER_REQUEST };
     expect(authReducer(initialState, action)).toEqual({
       ...initialState,
+      isAuthenticated: false, // Ensure this is part of the expected state
       loading: true,
       error: null,
     });
@@ -103,6 +106,7 @@ describe('Auth Reducer', () => {
       loading: false,
       user: mockUser,
       token: mockToken,
+      isAuthenticated: true, // REGISTER_SUCCESS sets this to true
       error: null,
     });
   });
@@ -119,6 +123,7 @@ describe('Auth Reducer', () => {
       error: errorMessage,
       user: null,
       token: null,
+      isAuthenticated: false, // REGISTER_FAILURE sets this to false
     });
   });
 });

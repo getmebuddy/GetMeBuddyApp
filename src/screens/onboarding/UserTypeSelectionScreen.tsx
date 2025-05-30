@@ -144,23 +144,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// Fallback style definitions
-const TYPOGRAPHY = {
-  h1: { fontSize: 26, fontWeight: 'bold' },
-  h3: { fontSize: 18, fontWeight: 'bold' },
-  subtitle: { fontSize: 16 },
-  body: { fontSize: 14, lineHeight: 14 * 1.4 },
-  ...TYPOGRAPHY,
-};
-const SPACING = {
-  xsmall: 4, small: 8, medium: 16, large: 24,
-  ...SPACING,
-};
-const COLORS = {
-  primary: '#4A80F0', white: '#FFFFFF', black: '#000000',
-  text: '#333333', grey600: '#4B5563', grey700: '#374151',
-  lightGrey: '#F3F4F6', lightPrimary: '#E0E7FF',
-  ...COLORS,
-};
+// Fallback style definitions have been removed.
+// Assuming TYPOGRAPHY, SPACING, COLORS are correctly imported and typed from their source files.
 
 export default UserTypeSelectionScreen;

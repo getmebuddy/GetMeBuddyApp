@@ -21,11 +21,12 @@ import { fetchPotentialMatches } from '../store/actions/matchActions'; // Assume
 import { getLocation, LocationCoords } from '../utils/locationUtils'; // Assume LocationCoords is { latitude: number; longitude: number; }
 import { COLORS } from '../styles/colors'; // Assume typed
 import { SPACING } from '../styles/spacing'; // Assume typed
-import { TYPOGRAPHY }S from '../styles/typography'; // Assume typed
+import { TYPOGRAPHY } from '../styles/typography'; // Assume typed
 
 import { UserProfile as User } from '../models/UserProfile'; // Use UserProfile as User
 import { AppDispatch, RootState } from '../store';
-import { MainTabParamList, AppStackParamList } from '../navigation'; // Import navigator types
+// Explicitly point to index if Metro/TS has trouble resolving directory imports for types
+import { MainTabParamList, AppStackParamList } from '../navigation/index';
 
 // Define the structure of a Potential Match item
 interface MatchInterest {
@@ -163,19 +164,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           </View>
         </View>
       )}
-     
+
       {item.profile.bio && (
         <View style={styles.bioContainer}>
           <Text style={styles.sectionTitle}>About</Text>
           <Text style={styles.bioText} numberOfLines={3}>{item.profile.bio}</Text>
         </View>
       )}
-      
+
       <View style={styles.matchScoreContainer}>
         <Text style={styles.matchScoreText}>Match Score: {Math.round(item.scores.total_score * 100)}%</Text>
         {/* Optional: Score breakdown can be detailed or removed for brevity */}
       </View>
-      
+
       <Button
         title="Let's Meet!"
         buttonStyle={styles.matchButton}
@@ -216,7 +217,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           </TouchableOpacity>
         )}
       </View>
-      
+
       {(loading && !refreshing && (!potentialMatches || potentialMatches.length === 0)) ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
@@ -275,43 +276,8 @@ const styles = StyleSheet.create({
   emptyButton: { backgroundColor: COLORS.primary, borderRadius: 25, paddingVertical: SPACING.small, paddingHorizontal: SPACING.medium, marginTop: SPACING.large },
 });
 
-// Fallback definitions if not present in imported styles, to prevent TS errors
-const TYPOGRAPHY = {
-  h1: { fontSize: 24, fontWeight: 'bold' },
-  h2: { fontSize: 20, fontWeight: 'bold' },
-  subtitle: { fontSize: 16, fontWeight: '600' },
-  body: { fontSize: 14 },
-  caption: { fontSize: 12 },
-  button: { fontSize: 16, fontWeight: 'bold', color: COLORS.white },
-  ...TYPOGRAPHYS // Spread the imported typography
-};
-
-const SPACING = {
-  xsmall: 4,
-  small: 8,
-  medium: 16,
-  large: 24,
-  extraLarge: 32,
-  ...SPACING // Spread the imported spacing
-};
-
-const COLORS = {
-  primary: '#4A80F0',
-  secondary: '#34D399',
-  background: '#F4F6F8',
-  white: '#FFFFFF',
-  black: '#000000',
-  text: '#333333',
-  textEmphasis: '#111111',
-  textSecondary: '#555555',
-  grey200: '#E5E7EB',
-  grey400: '#9CA3AF',
-  grey600: '#4B5563',
-  grey700: '#374151',
-  lightPrimary: '#E0E7FF',
-  lightGrey: '#F3F4F6',
-  ...COLORS // Spread the imported colors
-};
+// Fallback style definitions have been removed.
+// Assuming TYPOGRAPHY, SPACING, COLORS are correctly imported and typed from their source files.
 
 
 export default HomeScreen;

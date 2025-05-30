@@ -15,7 +15,7 @@ import { TYPOGRAPHY } from '../../styles/typography';
 
 import { AppDispatch, RootState } from '../../store';
 // Assuming ProfileStackParamList if this screen is part of a ProfileStack, or AppStackParamList
-import { AppStackParamList } from '../../navigation'; 
+import { AppStackParamList } from '../../navigation';
 
 // Types
 export interface BadgeType {
@@ -41,7 +41,7 @@ export interface UserAchievement {
   progress: number; // Percentage, 0-100
   completed_at?: string | null; // ISO date string
   // 'icon' was on the root of UserAchievement in JS, but makes more sense in AchievementDetails
-  // If API sends icon on UserAchievement root, adjust type: icon?: string; 
+  // If API sends icon on UserAchievement root, adjust type: icon?: string;
 }
 
 type ActiveTab = 'badges' | 'achievements';
@@ -127,7 +127,7 @@ const BadgesScreen: React.FC<BadgesScreenProps> = ({ navigation }) => {
       </View>
     );
   };
-  
+
   interface AchievementItemProps { userAchievement: UserAchievement; }
   const AchievementItem: React.FC<AchievementItemProps> = ({ userAchievement: ua }) => (
     <View style={styles.achievementContainer}>

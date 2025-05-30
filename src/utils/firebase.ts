@@ -49,17 +49,17 @@ export const socialAuth = {
       if (!idToken) {
         throw new Error("Google Sign-In failed to get ID token.");
       }
-      
+
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const userCredential: FirebaseAuthTypes.UserCredential = await auth().signInWithCredential(googleCredential);
-      
+
       if (!userCredential.user) {
         throw new Error("Firebase user not found after Google Sign-In.");
       }
-      
+
       const firebaseToken: string = await userCredential.user.getIdToken();
       const response = await authAPI.firebaseAuth(firebaseToken); // Expects AxiosResponse<BackendLoginResponse>
-      
+
       return response.data;
     } catch (error: any) {
       if (error.code === GoogleStatusCodes.SIGN_IN_CANCELLED) {
@@ -144,7 +144,7 @@ export const socialAuth = {
       const firebaseToken: string = await userCredential.user.getIdToken();
       // Typically, after sign-up, you might want to create a profile on your backend
       // The firebaseAuth endpoint might handle this if it creates a user on first token validation
-      const response = await authAPI.firebaseAuth(firebaseToken); 
+      const response = await authAPI.firebaseAuth(firebaseToken);
       return response.data;
     } catch (error: any) {
       console.error('Email Sign-Up Error:', error.code, error.message);
@@ -166,7 +166,7 @@ export const socialAuth = {
       // Don't rethrow usually, as sign out should try to complete as much as possible
     }
   },
-  
+
   getCurrentFirebaseUser: (): FirebaseAuthTypes.User | null => {
     return auth().currentUser;
   },

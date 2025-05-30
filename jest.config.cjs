@@ -2,7 +2,7 @@ module.exports = {
   preset: 'react-native',
   setupFilesAfterEnv: ['./jest.setup.ts'], // Updated to .ts
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|react-native-.*|@react-navigation/.*|@react-native-community|redux-mock-store|react-redux)'
+    'node_modules/(?!(jest-)?react-native|@react-native|react-native-.*|@react-navigation/.*|@react-native-community|redux-mock-store|react-redux|redux-thunk)'
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
@@ -10,7 +10,7 @@ module.exports = {
   },
   moduleNameMapper: {
     // Assuming mocks were converted to .ts as per previous subtasks
-    '\\.svg': '<rootDir>/__mocks__/svgMock.ts', 
+    '\\.svg': '<rootDir>/__mocks__/svgMock.ts',
     '\\.(jpg|jpeg|png|gif)$': '<rootDir>/__mocks__/imageMock.ts',
     // Verify these custom path mappings are still accurate and needed
     // For example, if using tsconfig.json paths, these might be redundant or conflict.

@@ -51,7 +51,8 @@ type AppThunk<ReturnType = void> = ThunkAction<Promise<AxiosResponse<any> | Retu
 
 export const login = (email: string, password: string): AppThunk<ApiLoginResponse> => {
   return async (dispatch: AppDispatch) => {
-    dispatch({ type: LOGIN_REQUEST } as LoginRequestAction);
+    const requestAction: LoginRequestAction = { type: LOGIN_REQUEST };
+    dispatch(requestAction);
     try {
       const response = await authAPI.login(email, password); // This already stores tokens via AsyncStorage in authAPI
       // Assuming response.data contains { user: UserProfile, access: string, refresh: string }
@@ -71,7 +72,8 @@ export const login = (email: string, password: string): AppThunk<ApiLoginRespons
 
 export const register = (userData: RegisterData): AppThunk<ApiLoginResponse> => { // Assuming RegisterData from api/auth.ts
   return async (dispatch: AppDispatch) => {
-    dispatch({ type: REGISTER_REQUEST } as RegisterRequestAction);
+    const requestAction: RegisterRequestAction = { type: REGISTER_REQUEST };
+    dispatch(requestAction);
     try {
       const response = await authAPI.register(userData);
       // Assuming response.data contains { user: UserProfile, access: string, refresh: string }
@@ -94,13 +96,15 @@ export const register = (userData: RegisterData): AppThunk<ApiLoginResponse> => 
 export const logout = (): AppThunk<void> => { // Return type is Promise<void> for the thunk itself
   return async (dispatch: AppDispatch) => {
     await authAPI.logout(); // Clears AsyncStorage
-    dispatch({ type: LOGOUT } as LogoutAction);
+    const logoutActionInstance: LogoutAction = { type: LOGOUT };
+    dispatch(logoutActionInstance);
   };
 };
 
 export const getCurrentUser = (): AppThunk<AxiosResponse<UserProfile>> => {
   return async (dispatch: AppDispatch) => {
-    dispatch({ type: GET_USER_REQUEST } as GetUserRequestAction);
+    const requestAction: GetUserRequestAction = { type: GET_USER_REQUEST };
+    dispatch(requestAction);
     try {
       const response = await authAPI.getCurrentUser(); // Assuming this returns AxiosResponse<UserProfile>
       dispatch({ type: GET_USER_SUCCESS, payload: response.data });

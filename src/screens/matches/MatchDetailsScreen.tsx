@@ -31,11 +31,11 @@ export interface MatchUserDetail extends UserProfile {
   birth_date?: string; // Already in UserProfile as dateOfBirth
   distance?: number;
   is_verified?: boolean; // Already in UserProfile as part of verificationLevel or specific field
-  
+
   // Assuming interests and availabilities might have a slightly different structure or need specific typing here
   interests?: Array<{ id: string | number; name: string }>;
   availabilities?: Array<{ id: string | number; day: string; start_time: string; end_time: string }>;
-  
+
   // Scores, if they are part of the userDetails object fetched
   match_score?: number;
   interest_score?: number;
@@ -50,10 +50,10 @@ type MatchDetailsScreenProps = StackScreenProps<AppStackParamList, 'MatchDetails
 const MatchDetailsScreen: React.FC<MatchDetailsScreenProps> = ({ route, navigation }) => {
   const { userId } = route.params; // userId is type string based on AppStackParamList
   const dispatch = useDispatch<AppDispatch>();
-  
+
   // Assuming userDetails in Redux state (state.matches) is typed as MatchUserDetail | null
   const { userDetails, loading } = useSelector((state: RootState) => state.matches as { userDetails: MatchUserDetail | null; loading: boolean });
-  
+
   const [requestSent, setRequestSent] = useState<boolean>(false);
   const [sendingRequest, setSendingRequest] = useState<boolean>(false);
 
@@ -127,7 +127,7 @@ const MatchDetailsScreen: React.FC<MatchDetailsScreenProps> = ({ route, navigati
       </SafeAreaView>
     );
   }
-  
+
   // Use userDetails.profilePictureUrl for avatar if UserProfile model is used
   const avatarUri = userDetails.avatar || userDetails.profilePictureUrl;
 
@@ -181,7 +181,7 @@ const MatchDetailsScreen: React.FC<MatchDetailsScreenProps> = ({ route, navigati
             </View>
           </View>
         )}
-        
+
         {userDetails.match_score !== undefined && ( // Check if match_score exists
             <View style={styles.matchScoreSection}>
                 <Text style={styles.sectionTitle}>Match Score</Text>

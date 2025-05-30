@@ -1,16 +1,20 @@
 import configureStore, { MockStoreEnhanced } from 'redux-mock-store';
-import thunk, { ThunkDispatch } from 'redux-thunk';
+import thunk from 'redux-thunk'; // Revert to standard ES6 import
+import type { ThunkDispatch, ThunkMiddleware } from 'redux-thunk'; // Ensure ThunkMiddleware is correctly sourced
+
 import {
   login,
   logout,
-  register, // Assuming register action exists and might be tested
-  LOGIN_REQUEST,
-  LOGIN_SUCCESS,
-  LOGIN_FAILURE,
-  LOGOUT,
-  // Assuming action types are exported or can be inferred for payload typing
-  AuthActionTypes, // A union type for all auth actions if defined
+  register,
+  // AuthActionTypes, // This can still be imported from authActions if it's exported there
 } from '../../../src/store/actions/authActions'; // Adjusted path
+
+// Import action type constants directly from types.ts
+import {
+  LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT,
+  REGISTER_REQUEST, REGISTER_SUCCESS, REGISTER_FAILURE // If testing register actions too
+} from '../../../src/store/actions/types';
+
 import { authAPI } from '../../../src/api/auth';
 import { User } from '../../../src/models/UserProfile'; // Assuming User type path
 import { RootState } from '../../../src/store/reducers'; // Assuming RootState type path
@@ -27,8 +31,8 @@ jest.mock('../../../src/api/auth', () => ({
 
 // Define types for the mock store
 type AppDispatch = ThunkDispatch<RootState, undefined, AnyAction>;
-const middlewares = [thunk];
-const mockStore = configureStore<Partial<RootState>, AppDispatch>(middlewares);
+const middlewaresToApply: ThunkMiddleware<RootState, AnyAction, undefined>[] = [thunk]; // Use thunk directly
+const mockStore = configureStore<Partial<RootState>, AppDispatch>(middlewaresToApply);
 
 describe('Auth Actions', () => {
   let store: MockStoreEnhanced<Partial<RootState>, AppDispatch>;
@@ -52,9 +56,9 @@ describe('Auth Actions', () => {
   describe('login action', () => {
     it('dispatches LOGIN_REQUEST and LOGIN_SUCCESS on successful login', async () => {
       const mockUser: User = { id: '1', email: 'test@example.com', name: 'Test User' }; // Adjusted User type
-      // Simulate the structure authAPI.login might return, often involving a 'data' property
       const mockApiResponse = { user: mockUser, access: 'fakeToken', refresh: 'fakeRefreshToken' };
-      (authAPI.login as jest.Mock).mockResolvedValue(mockApiResponse);
+      // authAPI.login returns an AxiosResponse, so mockResolvedValue needs to provide { data: ... }
+      (authAPI.login as jest.Mock).mockResolvedValue({ data: mockApiResponse });
 
       // Dispatch the login action. Need to cast to any if thunk action signature is complex
       await store.dispatch(login('test@example.com', 'password123') as any);
@@ -110,12 +114,13 @@ describe('Auth Actions', () => {
     it('dispatches appropriate actions on successful registration', async () => {
       const mockUser: User = { id: '2', email: 'new@example.com', name: 'New User' };
       const mockApiResponse = { user: mockUser, access: 'newFakeToken', refresh: 'newFakeRefreshToken' };
-      (authAPI.register as jest.Mock).mockResolvedValue(mockApiResponse);
-      
+      // authAPI.register also returns an AxiosResponse
+      (authAPI.register as jest.Mock).mockResolvedValue({ data: mockApiResponse });
+
       const userData = { email: 'new@example.com', password: 'newPassword123', name: 'New User'};
 
       // Assuming REGISTER_REQUEST, REGISTER_SUCCESS types exist
-      // await store.dispatch(register(userData) as any); 
+      // await store.dispatch(register(userData) as any);
       // const actions = store.getActions();
       // expect(actions[0].type).toBe('REGISTER_REQUEST'); // Replace with actual type
       // expect(actions[1].type).toBe('REGISTER_SUCCESS'); // Replace with actual type

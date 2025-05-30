@@ -71,7 +71,7 @@ const verificationReducer = (
     // So, these success actions might just stop loading, or update a part of the status if the payload contains it.
     // For simplicity, we'll assume the payload of individual verify actions might update specific flags
     // and GET_VERIFICATION_STATUS_SUCCESS always provides the full, authoritative status.
-    
+
     case VERIFY_EMAIL_SUCCESS: // Payload: SimpleVerificationResponse
       return {
         ...state,
@@ -106,7 +106,7 @@ const verificationReducer = (
         loading: false,
         verificationStatus: state.verificationStatus ? { ...state.verificationStatus, ...newStatus } : null,
       };
-      
+
     case GET_VERIFICATION_STATUS_SUCCESS: // Payload: UserVerificationStatus
       return {
         ...state,

@@ -21,7 +21,7 @@ export interface MessageState {
   loadingConversations: boolean;
   loadingMessages: boolean; // Specifically for fetching messages for a conversation
   sendingMessage: boolean; // For send message action
-  
+
   errorConversations: string | null;
   errorMessages: string | null;
   errorSendMessage: string | null;
@@ -114,12 +114,12 @@ const messageReducer = (
         // More detailed: update is_read on messages in messagesByConversationId[conversationId]
         messagesByConversationId: {
             ...state.messagesByConversationId,
-            [conversationId]: (state.messagesByConversationId[conversationId] || []).map(msg => 
+            [conversationId]: (state.messagesByConversationId[conversationId] || []).map(msg =>
                 readMessageIds.includes(msg.id) ? { ...msg, is_read: true } : msg
             )
         }
       };
-    
+
     case RECEIVE_MESSAGE: // For WebSocket integration
       const receivedMessage = action.payload;
       const convoId = receivedMessage.conversation_id;
@@ -129,8 +129,8 @@ const messageReducer = (
         ...state,
         messagesByConversationId: {
           ...state.messagesByConversationId,
-          [convoId]: isRelevantToActiveConvo 
-            ? [receivedMessage, ...(state.messagesByConversationId[convoId] || [])] 
+          [convoId]: isRelevantToActiveConvo
+            ? [receivedMessage, ...(state.messagesByConversationId[convoId] || [])]
             : (state.messagesByConversationId[convoId] || []), // Or fetch if not loaded and just update unread
         },
         conversations: state.conversations.map(conv =>

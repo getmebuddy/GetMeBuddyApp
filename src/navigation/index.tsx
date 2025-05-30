@@ -12,7 +12,7 @@ import { RootState, AppDispatch } from '../store';
 // Auth screens - ensure these are .tsx or correctly typed
 import LoginScreen from '../screens/auth/LoginScreen'; // Already .tsx
 import RegisterScreen from '../screens/auth/RegisterScreen'; // Assume .tsx or correctly typed
-import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen'; // Assume .tsx
+// import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen'; // Assume .tsx - COMMENTED OUT
 
 // Onboarding screens
 import UserTypeSelectionScreen from '../screens/onboarding/UserTypeSelectionScreen';
@@ -37,7 +37,7 @@ import { COLORS } from '../styles/colors'; // Assuming COLORS are typed
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
-  ForgotPassword: undefined;
+  ForgotPassword: undefined; // Keep in ParamList, but screen won't be used for now
 };
 
 export type OnboardingStackParamList = {
@@ -155,7 +155,7 @@ const AppNavigator: React.FC = () => {
 
   if (isCheckingAuth || authLoading || profileLoading) {
     // Replace with a proper Splash Screen component
-    return null; 
+    return null;
   }
 
   return (
@@ -164,7 +164,7 @@ const AppNavigator: React.FC = () => {
         <AuthStack.Navigator screenOptions={{ headerShown: false }}>
           <AuthStack.Screen name="Login" component={LoginScreen} />
           <AuthStack.Screen name="Register" component={RegisterScreen} />
-          <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          {/* <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} /> */}
         </AuthStack.Navigator>
       ) : !onboardingCompleted ? (
         <OnboardingNavigator />

@@ -1,9 +1,43 @@
 import { authAPI, UserRegistrationData, UserLoginData, AuthResponse, User } from '../../../src/api/auth'; // Assuming types are exported from auth API module
-import fetchMock from 'jest-fetch-mock';
+// import fetchMock from 'jest-fetch-mock';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Enable fetch mocks
-fetchMock.enableMocks();
+// Define mocks for axios instance methods that apiClient will use
+const mockApiPost = jest.fn();
+const mockApiGet = jest.fn();
+const mockApiPatch = jest.fn();
+const mockApiDelete = jest.fn();
+
+// Mock what axios.create() returns
+const mockAxiosInstance = {
+  interceptors: {
+    request: { use: jest.fn(), eject: jest.fn() },
+    response: { use: jest.fn(), eject: jest.fn() },
+  },
+  get: mockApiGet,
+  post: mockApiPost,
+  patch: mockApiPatch,
+  delete: mockApiDelete,
+};
+
+// Mock axios itself
+const mockCreate = jest.fn(() => mockAxiosInstance); // This is our spy for axios.create
+
+jest.mock('axios', () => ({
+  __esModule: true, // Indicate it's an ES module.
+  default: {         // The default export of the axios module.
+    create: mockCreate, // axios.default.create will be our spy.
+    get: jest.fn(),     // Mock top-level axios.default.get if ever used.
+    post: jest.fn(),    // Mock top-level axios.default.post if ever used.
+    isAxiosError: jest.fn((payload: any): payload is import('axios').AxiosError => !!payload && payload.isAxiosError === true), // Example for isAxiosError
+    // Add any other static/top-level methods of 'axios.default' your code might use.
+  },
+  // If your code also uses named exports from 'axios' like `import { isAxiosError } from 'axios'`, mock them here.
+  // For `import axios from 'axios'`, the `default` export above is what's typically used.
+  // To be safe, also providing create at the root if some import somehow bypasses default:
+  create: mockCreate,
+  isAxiosError: jest.fn((payload: any): payload is import('axios').AxiosError => !!payload && payload.isAxiosError === true),
+}));
 
 // Define a more specific type for the user in mock responses if not fully covered by User type from auth.ts
 interface MockUser extends User {
@@ -17,8 +51,13 @@ interface MockAuthResponse extends AuthResponse {
 
 describe('Auth API', () => {
   beforeEach(() => {
-    fetchMock.resetMocks();
-    // jest.clearAllMocks(); // Not needed usually with resetMocks for fetch, AsyncStorage is auto-mocked by setup
+    // Reset all mock implementations and call history
+    mockApiGet.mockReset();
+    mockApiPost.mockReset();
+    mockApiPatch.mockReset();
+    mockApiDelete.mockReset();
+    mockCreate.mockClear(); // Clear calls to axios.create itself if needed for some tests
+    // AsyncStorage mocks are typically handled by jest.setup.ts or auto-mocks
   });
 
   it('should register a user successfully', async () => {
@@ -33,7 +72,7 @@ describe('Auth API', () => {
       access: 'access-token',
     };
 
-    fetchMock.mockResponseOnce(JSON.stringify(mockApiResponse));
+    mockApiPost.mockResolvedValueOnce({ data: mockApiResponse }); // authAPI uses apiClient.post which is mockApiPost
 
     const userData: UserRegistrationData = {
       email: 'test@example.com',
@@ -43,33 +82,19 @@ describe('Auth API', () => {
       password_confirm: 'password123',
     };
 
-    // authAPI.register is expected to return a specific structure, often { data: ActualResponse } if using axios or similar
-    // For this example, let's assume authAPI.register directly returns the data part of the response or is adapted.
-    // If authAPI.register returns { data: ... }, then expect(response.data) should be expect(response.data.data) or similar.
-    // Let's assume authAPI.register is modified or designed to return the JSON directly for simplicity in this mock.
-    const response = await authAPI.register(userData);
+    const responseData = await authAPI.register(userData);
 
-    // If authAPI.register returns the parsed JSON directly:
-    expect(response).toEqual(mockApiResponse); 
-    // If authAPI.register returns an object like { data: mockApiResponse }:
-    // expect(response.data).toEqual(mockApiResponse);
-
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('/users/register/'), // Or the exact URL if known
-      expect.objectContaining({
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      })
+    expect(responseData).toEqual(mockApiResponse);
+    expect(mockApiPost).toHaveBeenCalledWith(
+      expect.stringContaining('/users/register/'),
+      userData,
+      expect.any(Object)
     );
   });
 
   it('should login a user and store tokens', async () => {
-    const mockLoginResponse: AuthResponse = { // Use AuthResponse if user details are not critical or different from User type
-      user: { // Assuming User type from auth.ts is { id: number; email: string; }
+    const mockLoginResponse: AuthResponse = {
+      user: {
         id: 1,
         email: 'test@example.com',
       },
@@ -77,46 +102,35 @@ describe('Auth API', () => {
       access: 'access-token',
     };
 
-    fetchMock.mockResponseOnce(JSON.stringify(mockLoginResponse));
+    mockApiPost.mockResolvedValueOnce({ data: mockLoginResponse }); // authAPI uses apiClient.post which is mockApiPost
 
     const loginData: UserLoginData = {
       email: 'test@example.com',
       password: 'password123',
     };
-    
-    // Assuming authAPI.login also returns the parsed JSON directly or handles the 'data' property internally.
-    await authAPI.login(loginData.email, loginData.password);
 
+    const responseData = await authAPI.login(loginData.email, loginData.password);
+
+    expect(responseData).toEqual(mockLoginResponse);
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('accessToken', 'access-token');
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('refreshToken', 'refresh-token');
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('/users/login/'), // Or the exact URL
-      expect.objectContaining({
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      })
+    expect(mockApiPost).toHaveBeenCalledWith(
+      expect.stringContaining('/token/'),
+      loginData,
+      expect.any(Object)
     );
   });
 
   it('should logout a user and remove tokens', async () => {
-    // Mock the /users/logout/ endpoint if it's called by authAPI.logout
-    // For example, if it expects a POST request and returns a 200/204 status
-    fetchMock.mockResponseOnce('', { status: 204 });
+    // authAPI.logout primarily clears AsyncStorage and doesn't make a network request in its current form.
+    // If it did, we would mock it:
+    // mockedAxios.post.mockResolvedValueOnce({});
 
     await authAPI.logout();
 
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith('accessToken');
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith('refreshToken');
-    
-    // Example: Check if fetch was called for logout, if applicable
-    // expect(fetchMock).toHaveBeenCalledWith(
-    //   expect.stringContaining('/users/logout/'),
-    //   expect.objectContaining({
-    //     method: 'POST', // or 'GET', depending on your API
-    //   })
-    // );
+    // If authAPI.logout made a call:
+    // expect(mockedAxios.post).toHaveBeenCalledWith(expect.stringContaining('/users/logout/'), expect.anything());
   });
 });

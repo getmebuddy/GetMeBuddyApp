@@ -49,7 +49,7 @@ const matchReducer = (
 
     case FETCH_POTENTIAL_MATCHES_SUCCESS:
       return { ...state, loading: false, potentialMatches: action.payload, error: null };
-    
+
     case FETCH_USER_DETAILS_SUCCESS:
       return { ...state, loading: false, userDetails: action.payload, error: null };
 
@@ -60,7 +60,7 @@ const matchReducer = (
       // If payload is the new match, add it to potentialMatches or matches list
       // For now, just stop loading. Actual list updates might need more specific logic or re-fetching.
       return { ...state, matchActionLoading: false, matchActionError: null };
-      
+
     case RESPOND_TO_MATCH_SUCCESS:
       // Update the status of the specific match in either 'matches' or 'potentialMatches' list
       const { matchId, newStatus } = action.payload; // Assuming payload has matchId and newStatus
@@ -69,7 +69,7 @@ const matchReducer = (
         matchActionLoading: false,
         matchActionError: null,
         matches: state.matches.map(m => m.id === matchId ? { ...m, status: newStatus } : m),
-        potentialMatches: state.potentialMatches.map(pm => 
+        potentialMatches: state.potentialMatches.map(pm =>
             (pm.user_id === matchId && pm.scores) // Assuming potentialMatch user_id can be a matchId
             ? { ...pm, status: newStatus } // This is a simplification; potentialMatches might not have a status field
             : pm

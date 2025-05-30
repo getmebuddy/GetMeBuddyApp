@@ -62,7 +62,7 @@ const authReducer = (
         // If a token exists, isAuthenticated should remain true.
         // If no token, this implies an issue or that GET_USER_SUCCESS should also provide a token.
         // For now, assume token presence means authenticated.
-        isAuthenticated: !!state.token, 
+        isAuthenticated: !!state.token,
         error: null,
       };
 
@@ -100,7 +100,7 @@ const authReducer = (
 
 export default authReducer;
 
-// Note: 
+// Note:
 // 1. Ensure 'SET_AUTH_STATE' is added to types.ts.
 // 2. Ensure AuthActionTypes in authActions.ts includes SetAuthStateAction or manually add it to the union type here.
 //    It's better if AuthActionTypes from authActions.ts is comprehensive.

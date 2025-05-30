@@ -4,6 +4,12 @@ import fetchMock from 'jest-fetch-mock';
 
 fetchMock.enableMocks();
 
+// Explicitly mock style utilities to ensure __mocks__ are used.
+// Paths should be relative to the project root, or use module names if configured.
+jest.mock('./src/styles/colors');
+jest.mock('./src/styles/spacing');
+jest.mock('./src/styles/typography');
+
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
   setItem: jest.fn(() => Promise.resolve(null)), // Adjusted to match return type if not void
@@ -26,7 +32,10 @@ jest.mock('react-native-image-picker', () => ({
 
 // Mock Animated modules - These are often problematic in Jest
 // Using virtual mocks can help avoid errors related to native animations.
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper'); // Simpler mock
+// Restore original virtual mocks
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper', () => ({}), { virtual: true });
+jest.mock('react-native/Libraries/Animated/drivers/NativeAnimatedHelper', () => ({}), { virtual: true });
+jest.mock('react-native/Libraries/Animated/animations/Animation', () => ({}), { virtual: true });
 
 // Mock React Navigation - simplified version
 // For more complex tests involving navigation, consider @testing-library/react-navigation
@@ -164,6 +173,12 @@ jest.mock('react-native/Libraries/Alert/Alert', () => ({
 }));
 
 // Optional: Silence console.error and console.warn during tests if they are too noisy
+// (global as any).console = {
+//   ...console,
+//   // log: jest.fn(),
+//   // warn: jest.fn(),
+//   // error: jest.fn(),
+// };
 // (global as any).console = {
 //   ...console,
 //   // log: jest.fn(),

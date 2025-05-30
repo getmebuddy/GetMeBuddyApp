@@ -88,7 +88,7 @@ const SubscriptionScreen: React.FC<SubscriptionScreenProps> = ({ navigation }) =
         plan_id: selectedPlanId,
         promo_code: promoApplied ? promoCode : undefined, // Send undefined or null if not applied
         // These URLs would be handled by deep linking in a real app
-        success_url: 'getmebuddy://subscription/success', 
+        success_url: 'getmebuddy://subscription/success',
         cancel_url: 'getmebuddy://subscription/cancel',
       };
       // const response = await dispatch(createCheckoutSession(checkoutPayload));

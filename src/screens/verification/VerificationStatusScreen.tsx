@@ -88,7 +88,7 @@ const VerificationStatusScreen: React.FC<VerificationStatusScreenProps> = ({ nav
     if (!verificationStatus?.level || verificationStatus.level === 'incomplete') return 'Not Verified';
     return verificationStatus.level.charAt(0).toUpperCase() + verificationStatus.level.slice(1);
   };
-  
+
   const getLevelColor = (level?: VerificationLevel | 'incomplete'): string => {
     if (level === 'premium') return COLORS.secondary; // Premium color
     if (level === 'enhanced') return COLORS.primary;
@@ -118,7 +118,7 @@ const VerificationStatusScreen: React.FC<VerificationStatusScreenProps> = ({ nav
   if (loading && !verificationStatus) {
     return <SafeAreaView style={styles.loadingContainer}><ActivityIndicator size="large" color={COLORS.primary} /><Text style={styles.loadingText}>Loading status...</Text></SafeAreaView>;
   }
-  
+
   if (!verificationStatus) {
      return <SafeAreaView style={styles.loadingContainer}><Text style={styles.errorText}>Could not load verification status.</Text><Button title="Retry" onPress={() => user?.id && dispatch(getVerificationStatus(user.id))} /></SafeAreaView>;
   }

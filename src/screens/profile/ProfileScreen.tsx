@@ -51,13 +51,13 @@ interface ProfileScreenProps {
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch<AppDispatch>();
-  
+
   // Use actual profile data from Redux state
   const userProfile = useSelector((state: RootState) => state.profile.profileData as UserProfileModel | null);
   const userType = useSelector((state: RootState) => state.profile.userType);
   // Assuming verificationStatus is part of UserProfile or fetched separately
   // For now, let's use verificationLevel from UserProfile
-  const verificationLevel = userProfile?.verificationLevel || 'basic'; 
+  const verificationLevel = userProfile?.verificationLevel || 'basic';
   const authUser = useSelector((state: RootState) => state.auth.user); // For name fallback
 
   // Fetch profile data when the screen is focused
@@ -66,7 +66,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
       dispatch(fetchProfile()); // Action to fetch/refresh profile data
     }, [dispatch])
   );
-  
+
   const isActivityType = userType === 'activity' || userType === 'both';
   const isCompanionType = userType === 'companion' || userType === 'both';
 
@@ -83,7 +83,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
     // Type assertion needed if screenName is not strictly from AppStackParamList keys for placeholders
     navigation.navigate('AppStack', { screen: screenName as keyof AppStackParamList });
   };
-  
+
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
@@ -100,7 +100,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
       </SafeAreaView>
     );
   }
-  
+
   const displayName = userProfile.name || `${authUser?.name || 'User'}`;
 
   return (
