@@ -1,4 +1,5 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
+$RNVersion = '0.78.0' # Added this line
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
